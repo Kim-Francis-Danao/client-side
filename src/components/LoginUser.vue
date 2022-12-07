@@ -40,7 +40,7 @@
 
         <v-text-field
           class="mt-16 pa-3"
-          hint="Username is required."
+          hint="Minimum of 4 characters"
           maxlength="20"
           label="Username"
           v-model="username"
@@ -51,7 +51,7 @@
 
         <v-text-field
           class="pa-3"
-          hint="Password is required."
+          hint="Minimum of 4 characters"
           label="Password"
           maxlength="20"
           v-model="password"
@@ -69,7 +69,7 @@
           color="primary"
           :disabled="isBtnDisabled" 
           :enabled="isBtnDisabled"
-          @click="submitBtn()"
+          @click.prevent="submitBtn()"
         >
           Submit
         </v-btn>
@@ -100,6 +100,7 @@
 
       rules: {
           required: value => !!value || 'Required.',
+          // add another rules...
       },
 
       userData: []
@@ -113,8 +114,9 @@
           : this.isBtnDisabled = true;
       },
 
-      submitBtn: async function() {
-        axios
+      async submitBtn() {
+
+        await axios
           .post('http://localhost:1337/api/auth/local', {
             identifier: this.username,
             password: this.password,
@@ -122,13 +124,8 @@
           .then(response => {
             // Handle success.
             console.log('User successfuly logged in !!!')
-
-            this.userData.push({
-              userIsLogin: true,
-              token: response.data.jwt
-            })
-
-            this.$emit("userIsLogin", this.userData); // Pass user data
+            localStorage.setItem('USER_TOKEN', response.data.jwt);
+            location.reload();
           })
           .catch(error => {
             // Handle error.

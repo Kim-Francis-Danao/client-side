@@ -2,9 +2,8 @@
   <v-app 
     id="inspire" 
   >
-    <login-user 
+    <login-user
       v-if="!userIsLogin"
-      @userIsLogin="logIn($event)" 
     />
 
     <v-navigation-drawer 
@@ -33,7 +32,7 @@
           v-for="item in items"
           :key="item.title"
           :to="item.to"
-          @click="item.logOut ? userIsLogin = false : '' "
+          @click="item.logOut ? logOut() : ''"
           link
         >
           <v-list-item-icon>
@@ -75,7 +74,7 @@
     </v-app-bar>
 
     <v-main v-if="userIsLogin">
-      <router-view :token="token"/>
+      <router-view />
     </v-main>
   </v-app>
 </template>
@@ -117,20 +116,16 @@
       ],
     }),
 
+    mounted() {
+      localStorage.getItem('USER_TOKEN') !== null 
+        ? this.userIsLogin = true 
+        : this.userIsLogin = false;
+    },
+
     methods: {
-
-      logIn(userData) {
-        try {
-          this.userIsLogin = userData[0].userIsLogin;
-          this.token = userData[0].token;
-          console.log('Entering todo app...');
-        } catch (error) {
-          console.log('An error occurred: ', error);
-        }
-      },
-
       logOut() {
-        userIsLogin = false
+        localStorage.removeItem('USER_TOKEN');
+        location.reload();
       }
     }
   }

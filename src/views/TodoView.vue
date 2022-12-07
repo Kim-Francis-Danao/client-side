@@ -95,14 +95,10 @@
 
   export default {
     name: 'Home',
-
-    props: {
-      token: { type:String }
-    },
-
+    
     data: () => ({
       updateId: null,
-      newTask: '',
+      newTask: null,
       config: {},
       userData: [],
       isUpdating: false
@@ -117,7 +113,7 @@
         try {
           this.config = {
             headers: {
-              Authorization: `Bearer ${this.token}`
+              Authorization: `Bearer ${localStorage.getItem('USER_TOKEN')}`
             }
           }
 
@@ -131,29 +127,33 @@
       },
       
       async addTask() {
-        const bodyParameters = {
-          "data" : {
-            taskName: this.newTask,
-            isDone: false,
-            users_permissions_user: this.userData.id
-          }
-        };
+        if(this.newTask.length >= 3) {
+          const bodyParameters = {
+            "data" : {
+              taskName: this.newTask,
+              isDone: false,
+              users_permissions_user: this.userData.id
+            }
+          };
 
-        await axios
-        .post(
-          'http://localhost:1337/api/tasks',
-          bodyParameters,
-          this.config
-        )
-        .then( response => {
-          console.log('New task is added! ', response);
-          this.getData();
-        })
-        .catch(error => {
-          console.log('An error occurred:', error);
-        });
+          await axios
+          .post(
+            'http://localhost:1337/api/tasks',
+            bodyParameters,
+            this.config
+          )
+          .then( response => {
+            console.log('New task is added! ', response);
+            this.getData();
+          })
+          .catch(error => {
+            console.log('An error occurred:', error);
+          });
 
-        this.newTask = '';
+          this.newTask = '';
+        } else {
+          alert('A task must have more than 3 characters.')
+        }
       },
 
       async doneTask(id) {
