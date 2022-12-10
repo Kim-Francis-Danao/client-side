@@ -1,5 +1,5 @@
 <template>
-  <v-form class="mt-16">
+  <v-form class="mt-10">
     <v-row justify="center">
       <v-col
         sm="3"
